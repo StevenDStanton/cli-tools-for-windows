@@ -17,12 +17,12 @@ var (
 	// maxLineLengthShort = flag.Bool("L", false, "print the length of the longest line")
 	// printWords         = flag.Bool("words", false, "print the word counts")
 	// printWordsShort    = flag.Bool("w", false, "print the word counts")
-	// helpFlag    = flag.Bool("help", false, "display this help and exit")
+	helpFlag    = flag.Bool("help", false, "display this help and exit")
 	versionFlag = flag.Bool("version", false, "output version information and exit")
 )
 
 func main() {
-	const version = "0.0.1"
+	const version = "0.0.2"
 	// charCount := 0
 	// newLineCount := 0
 	// maxLineLen := 0
@@ -30,8 +30,12 @@ func main() {
 	flag.Parse()
 
 	if *versionFlag {
-		fmt.Printf("wc Version %s\nCopyright 2024 The Simple Dev\nLicense MIT - No Warranty\n\nWritten By Steven Stanton\nReverse Engineered by RTFM", version)
+		fmt.Printf("go Version %s\nCopyright 2024 The Simple Dev\nLicense MIT - No Warranty\n\nWritten By Steven Stanton\nReverse Engineered by RTFM", version)
 		os.Exit(0)
+	}
+
+	if *helpFlag {
+
 	}
 
 }
