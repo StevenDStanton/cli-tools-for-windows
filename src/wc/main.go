@@ -23,7 +23,7 @@ var (
 )
 
 func main() {
-	const version = "0.5.1"
+	const version = "0.5.2"
 	flag.Parse()
 	args := flag.Args()
 
@@ -141,6 +141,10 @@ Part of my Linux Tools for Windows (ltfw) project.
 
 	if *maxLineLength || *maxLineLengthShort {
 		fmt.Printf("%d ", maxLineLen)
+	}
+
+	if filename != "" || allFlagsFalse() {
+		fmt.Printf("%s ", filename)
 	}
 
 }
