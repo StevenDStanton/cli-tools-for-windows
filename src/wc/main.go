@@ -19,6 +19,7 @@ var (
 	// printWordsShort    = flag.Bool("w", false, "print the word counts")
 	helpFlag    = flag.Bool("help", false, "display this help and exit")
 	versionFlag = flag.Bool("version", false, "output version information and exit")
+	aboutFlag   = flag.Bool("about", false, "display information about the program and exit")
 )
 
 func main() {
@@ -59,6 +60,23 @@ newLine, word, character, byte, maximum line length.
 --about 			  display information about the program and exit`
 
 		fmt.Println(help)
+		os.Exit(0)
+	}
+
+	if *aboutFlag {
+		about := `This is a simple implementation of the wc command in Go.
+
+This program has been reversed engineered from the GNU Coreutils wc program using only documentation and observed behavior in a clean room environment.
+
+Author:         Steven Stanton
+License:        MIT - No Warranty
+Author Github:  https//github.com/StevenDStanton
+Project Github: https://github.com/StevemStanton/ltfw
+
+Part of my Linux Tools for Windows (ltfw) project.
+`
+		fmt.Println(about)
+		os.Exit(0)
 	}
 
 }
