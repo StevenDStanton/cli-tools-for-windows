@@ -23,7 +23,7 @@ var (
 )
 
 func main() {
-	const version = "0.0.2"
+	const version = "0.0.3"
 	// charCount := 0
 	// newLineCount := 0
 	// maxLineLen := 0
