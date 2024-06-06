@@ -23,13 +23,9 @@ var (
 )
 
 func main() {
-	const version = "0.1.0"
+	const version = "0.5.1"
 	flag.Parse()
 	args := flag.Args()
-	// charCount := 0
-	// newLineCount := 0
-	// maxLineLen := 0
-	// wordCount := 0
 
 	if *versionFlag {
 		fmt.Printf("go Version %s\nCopyright 2024 The Simple Dev\nLicense MIT - No Warranty\n\nWritten By Steven Stanton\nReverse Engineered by RTFM", version)
@@ -96,24 +92,64 @@ Part of my Linux Tools for Windows (ltfw) project.
 		}
 	}
 
-	if *printLines || *printLinesShort {
+	charCount := 0
+	newLineCount := 0
+	maxLineLen := 0
+	wordCount := 0
 
+	stringData := string(fileData)
+	inWord := false
+	currentLineLen := 0
+	for _, char := range stringData {
+		charCount++
+
+		if char == '\n' {
+			newLineCount++
+			if currentLineLen > maxLineLen {
+				maxLineLen = currentLineLen
+			}
+			currentLineLen = 0
+		} else {
+			currentLineLen++
+		}
+
+		if inWord && (char == ' ' || char == '\n' || char == '\r' || char == '\t') {
+			inWord = false
+		}
+
+		if !inWord && (char != ' ' && char != '\n' && char != '\r' && char != '\t') {
+			inWord = true
+			wordCount++
+		}
 	}
 
-	if *printWords || *printWordsShort {
+	if *printLines || *printLinesShort || allFlagsFalse() {
+		fmt.Printf("%d ", newLineCount)
+	}
 
+	if *printWords || *printWordsShort || allFlagsFalse() {
+		fmt.Printf("%d ", wordCount)
 	}
 
 	if *printChars || *printCharsShort {
-
+		fmt.Printf("%d ", charCount)
 	}
 
-	if *printBytes || *printBytesShort {
-		fmt.Println(len(fileData))
+	if *printBytes || *printBytesShort || allFlagsFalse() {
+		fmt.Printf("%d ", len(fileData))
 	}
 
 	if *maxLineLength || *maxLineLengthShort {
-
+		fmt.Printf("%d ", maxLineLen)
 	}
 
+}
+
+func allFlagsFalse() bool {
+	return !*printBytes && !*printBytesShort &&
+		!*printChars && !*printCharsShort &&
+		!*printLines && !*printLinesShort &&
+		!*maxLineLength && !*maxLineLengthShort &&
+		!*printWords && !*printWordsShort &&
+		!*helpFlag && !*versionFlag && !*aboutFlag
 }
