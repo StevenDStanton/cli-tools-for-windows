@@ -47,10 +47,10 @@ var (
 )
 
 func main() {
-	const version = "0.8.0"
+	const version = "0.9.0"
 	parseArgs()
 
-	debug := true
+	debug := false
 
 	if debug {
 
@@ -106,31 +106,74 @@ func allFlagsFalse() bool {
 func parseArgs() {
 	//I am aware of the flags package. However as I am trying to replicate how wc works on linux it proved to limited for my needs.
 	args := os.Args[1:]
+	processingFlags := true
 
 	for _, arg := range args {
-		switch arg {
-		case "--byte", "-c":
-			cmdFlags.printBytes = true
-		case "--chars", "-m":
-			cmdFlags.printChars = true
-		case "--lines", "-l":
-			cmdFlags.printLines = true
-		case "--max-line-length", "-L":
-			cmdFlags.maxLineLength = true
-		case "--words", "-w":
-			cmdFlags.printWords = true
-		case "--help":
-			cmdFlags.helpFlag = true
-		case "--version":
-			cmdFlags.versionFlag = true
-		case "--about":
-			cmdFlags.aboutFlag = true
-		default:
-			if strings.HasPrefix(arg, "-") {
-				continue
-			}
+		if !processingFlags {
 			fileNames = append(fileNames, arg)
+			continue
 		}
+		if arg == "--" {
+			processingFlags = false
+			continue
+		}
+
+		if strings.HasPrefix(arg, "--") {
+			// Handle long options
+			switch arg {
+			case "--byte":
+				cmdFlags.printBytes = true
+			case "--chars":
+				cmdFlags.printChars = true
+			case "--lines":
+				cmdFlags.printLines = true
+			case "--max-line-length":
+				cmdFlags.maxLineLength = true
+			case "--words":
+				cmdFlags.printWords = true
+			case "--help":
+				cmdFlags.helpFlag = true
+			case "--version":
+				cmdFlags.versionFlag = true
+			case "--about":
+				cmdFlags.aboutFlag = true
+			default:
+				fmt.Printf("wc: unrecognized option %s\n", arg)
+				os.Exit(1)
+			}
+
+			continue
+		}
+
+		if strings.HasPrefix(arg, "-") {
+			for _, flag := range arg {
+				switch flag {
+				case '-':
+					continue
+				case 'c':
+					cmdFlags.printBytes = true
+				case 'm':
+					cmdFlags.printChars = true
+				case 'l':
+					cmdFlags.printLines = true
+				case 'L':
+					cmdFlags.maxLineLength = true
+				case 'w':
+					cmdFlags.printWords = true
+				default:
+					fmt.Printf("wc: invalid option -- %s\n", string(flag))
+					os.Exit(1)
+				}
+			}
+			continue
+		}
+
+		if strings.HasPrefix(arg, "-") {
+			continue
+		}
+
+		fileNames = append(fileNames, arg)
+
 	}
 
 }
@@ -230,22 +273,22 @@ func getMaxWidths(lines []lineData) lineSize {
 		lineLenWidth := len(fmt.Sprintf("%d", line.maxLineLen))
 		lineNameWidth := len(line.name)
 
-		if maxLineCountWidth > newLineWidth {
+		if maxLineCountWidth < newLineWidth {
 			maxLineCountWidth = newLineWidth
 		}
-		if maxWordCountWidth > lineWordWidth {
+		if maxWordCountWidth < lineWordWidth {
 			maxWordCountWidth = lineWordWidth
 		}
-		if maxCharCountWidth > lineCharWidth {
+		if maxCharCountWidth < lineCharWidth {
 			maxCharCountWidth = lineCharWidth
 		}
-		if maxByteCountWidth > lineByteWidth {
+		if maxByteCountWidth < lineByteWidth {
 			maxByteCountWidth = lineByteWidth
 		}
-		if maxLineLengthWidth > lineLenWidth {
+		if maxLineLengthWidth < lineLenWidth {
 			maxLineLengthWidth = lineLenWidth
 		}
-		if maxLineNameWidth > lineNameWidth {
+		if maxLineNameWidth < lineNameWidth {
 			maxLineNameWidth = lineNameWidth
 		}
 
