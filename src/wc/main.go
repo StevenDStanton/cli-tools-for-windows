@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
@@ -22,7 +24,6 @@ type lineSize struct {
 	charCount  int
 	byteCount  int
 	maxLineLen int
-	name       int
 }
 
 type flags struct {
@@ -47,7 +48,7 @@ var (
 )
 
 func main() {
-	const version = "0.9.0"
+	const version = "0.10.0"
 	parseArgs()
 
 	debug := false
@@ -81,8 +82,16 @@ IsAllFalse: %t
 	}
 
 	lines := []lineData{}
-	for _, filename := range fileNames {
-		lines = append(lines, parseFile(filename))
+	if len(fileNames) == 0 {
+		lines = append(lines, parseUserInput())
+	} else {
+		for _, filename := range fileNames {
+			if filename == "-" {
+				lines = append(lines, parseUserInput())
+				continue
+			}
+			lines = append(lines, parseFile(filename))
+		}
 	}
 
 	if len(fileNames) > 1 {
@@ -145,7 +154,7 @@ func parseArgs() {
 			continue
 		}
 
-		if strings.HasPrefix(arg, "-") {
+		if strings.HasPrefix(arg, "-") && arg != "-" {
 			for _, flag := range arg {
 				switch flag {
 				case '-':
@@ -168,10 +177,6 @@ func parseArgs() {
 			continue
 		}
 
-		if strings.HasPrefix(arg, "-") {
-			continue
-		}
-
 		fileNames = append(fileNames, arg)
 
 	}
@@ -183,13 +188,30 @@ func parseFile(fileName string) lineData {
 	if err != nil {
 		return lineData{0, 0, 0, 0, 0, fileName, "No such file or directory"}
 	}
+
+	return parseText(fileData, fileName)
+}
+
+func parseUserInput() lineData {
+	reader := bufio.NewReader(os.Stdin)
+	userInput, err := reader.ReadBytes('\x00')
+	if err != nil {
+		if err == io.EOF {
+			return parseText(userInput, "-")
+		}
+		return lineData{0, 0, 0, 0, 0, "-", "Error Reading Standard Input"}
+	}
+	return parseText(userInput, "-")
+}
+
+func parseText(text []byte, lineName string) lineData {
 	charCount := 0
 	lineCount := 0
 	maxLineLen := 0
 	wordCount := 0
-	byteCount := len(fileData)
+	byteCount := len(text)
 
-	stringData := string(fileData)
+	stringData := string(text)
 	inWord := false
 	currentLineLen := 0
 	for _, char := range stringData {
@@ -215,14 +237,13 @@ func parseFile(fileName string) lineData {
 		}
 	}
 
-	totalBytes += len(fileData)
+	totalBytes += byteCount
 	totalChars += charCount
 	totalLines += lineCount
 	totalWords += wordCount
 	totalMaxLineLen += maxLineLen
 
-	return lineData{lineCount, wordCount, charCount, byteCount, maxLineLen, fileName, ""}
-
+	return lineData{lineCount, wordCount, charCount, byteCount, maxLineLen, lineName, ""}
 }
 
 func printLinesToConsole(lineData []lineData, lineSize lineSize) {
@@ -252,7 +273,7 @@ func printLinesToConsole(lineData []lineData, lineSize lineSize) {
 			fmt.Printf("%*d ", lineSize.maxLineLen, line.maxLineLen)
 		}
 
-		fmt.Printf("%*s \n", lineSize.name, line.name)
+		fmt.Printf("%s \n", line.name)
 	}
 }
 
@@ -293,7 +314,7 @@ func getMaxWidths(lines []lineData) lineSize {
 		}
 
 	}
-	lineSize := lineSize{maxLineCountWidth, maxWordCountWidth, maxCharCountWidth, maxByteCountWidth, maxLineLengthWidth, maxLineNameWidth}
+	lineSize := lineSize{maxLineCountWidth, maxWordCountWidth, maxCharCountWidth, maxByteCountWidth, maxLineLengthWidth}
 	return lineSize
 }
 
