@@ -48,7 +48,7 @@ var (
 )
 
 func main() {
-	const version = "0.10.0"
+	const version = "0.10.3"
 	parseArgs()
 
 	debug := false
@@ -148,6 +148,7 @@ func parseArgs() {
 				cmdFlags.aboutFlag = true
 			default:
 				fmt.Printf("wc: unrecognized option %s\n", arg)
+				fmt.Println("Try 'wc --help' for more information.")
 				os.Exit(1)
 			}
 
@@ -171,6 +172,7 @@ func parseArgs() {
 					cmdFlags.printWords = true
 				default:
 					fmt.Printf("wc: invalid option -- %s\n", string(flag))
+					fmt.Println("Try 'wc --help' for more information.")
 					os.Exit(1)
 				}
 			}
