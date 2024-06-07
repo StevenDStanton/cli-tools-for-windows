@@ -35,6 +35,7 @@ type flags struct {
 	helpFlag      bool
 	versionFlag   bool
 	aboutFlag     bool
+	debug         bool
 }
 
 var (
@@ -48,12 +49,10 @@ var (
 )
 
 func main() {
-	const version = "0.10.3"
+	const version = "0.10.4"
 	parseArgs()
 
-	debug := false
-
-	if debug {
+	if cmdFlags.debug {
 
 		fmt.Printf(`Debugging
 printBytes: %t
@@ -170,6 +169,8 @@ func parseArgs() {
 					cmdFlags.maxLineLength = true
 				case 'w':
 					cmdFlags.printWords = true
+				case 'd':
+					cmdFlags.debug = true
 				default:
 					fmt.Printf("wc: invalid option -- %s\n", string(flag))
 					fmt.Println("Try 'wc --help' for more information.")
@@ -337,6 +338,7 @@ newLine, word, character, byte, maximum line length.
 -l, --lines            print the newline counts
 -L, --max-line-length  print the length of the longest line
 -w, --words            print the word counts
+-d                     Enables Debugging
 
 --files0-from=F        read input from the files specified by NUL-terminated names in file F; If F is - then read names from standard input
 
