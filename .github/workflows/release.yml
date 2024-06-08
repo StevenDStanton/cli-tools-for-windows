@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # Explicitly set permissions for the GITHUB_TOKEN
+  contents: write
 
 jobs:
   build:
@@ -58,7 +58,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }} # Use PAT instead of GITHUB_TOKEN
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
