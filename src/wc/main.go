@@ -49,7 +49,7 @@ var (
 )
 
 func main() {
-	const version = "0.10.4"
+	const version = "1.0.0"
 	parseArgs()
 
 	if cmdFlags.debug {
@@ -115,9 +115,16 @@ func parseArgs() {
 	//I am aware of the flags package. However as I am trying to replicate how wc works on linux it proved to limited for my needs.
 	args := os.Args[1:]
 	processingFlags := true
+	nullSeparatesFileNames := false
 
 	for _, arg := range args {
-		if !processingFlags {
+
+		if strings.HasPrefix(arg, "--files0-from=") {
+			fmt.Println("Not Implemented due to Windows limitations")
+			os.Exit(1)
+		}
+
+		if !processingFlags && !nullSeparatesFileNames {
 			fileNames = append(fileNames, arg)
 			continue
 		}
@@ -180,7 +187,9 @@ func parseArgs() {
 			continue
 		}
 
-		fileNames = append(fileNames, arg)
+		if !nullSeparatesFileNames {
+			fileNames = append(fileNames, arg)
+		}
 
 	}
 
@@ -323,7 +332,6 @@ func getMaxWidths(lines []lineData) lineSize {
 
 func printHelp() {
 	help := `Usage: wc [OPTION]... [FILE]...
-Multiple Files: wc [OPTION]... --files0-from=F
 
 Prints new line, word, and byte counts for each FILE and a total line if more file is specified.
 A word is a non-zero length sequence of characters delimited by white space.
@@ -340,7 +348,7 @@ newLine, word, character, byte, maximum line length.
 -w, --words            print the word counts
 -d                     Enables Debugging
 
---files0-from=F        read input from the files specified by NUL-terminated names in file F; If F is - then read names from standard input
+--files0-from=F        Has not been included in the Windows version due to issues with null terminators in Windows. 
 
 --help                 display this help and exit
 --version              output version information and exit
