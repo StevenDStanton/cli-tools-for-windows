@@ -51,6 +51,11 @@ jobs:
         with:
           path: ./bin
 
+      - name: Debug Token
+        run: echo ${{ secrets.PAT }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
