@@ -49,7 +49,7 @@ var (
 )
 
 func main() {
-	const version = "1.0.5"
+	const version = "1.0.7"
 	parseArgs()
 
 	if cmdFlags.debug {
