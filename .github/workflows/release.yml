@@ -25,7 +25,7 @@ jobs:
         with:
           go-version: 1.22.3
 
-      - name: Build Apllication
+      - name: Build Application
         run: |
           mkdir -p bin/${{ matrix.goos }}
           for dir in src/*; do
@@ -33,10 +33,10 @@ jobs:
             GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o bin/${{ matrix.goos }}/${app}${{ matrix.goos == 'windows' && '.exe' || '' }} $dir/main.go
           done
 
-          - name: Archive build output
-          if: success()
-          run: |
-            zip -r bin/ltfw-${{ matrix.goos }}-${{ matrix.goarch }}.zip bin/${{ matrix.goos }}
+      - name: Archive build output
+        if: success()
+        run: |
+          zip -r bin/ltfw-${{ matrix.goos }}-${{ matrix.goarch }}.zip bin/${{ matrix.goos }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
