@@ -12,11 +12,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        goos: [windows, linux]
-        goarch: [amd64]
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -28,62 +23,46 @@ jobs:
 
       - name: Build Application
         run: |
-          mkdir -p bin/${{ matrix.goos }}
+          mkdir -p bin
           for dir in src/*; do
             app=$(basename $dir)
-            GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o bin/${{ matrix.goos }}/${app}${{ matrix.goos == 'windows' && '.exe' || '' }} $dir/main.go
+            GOOS=windows GOARCH=amd64 go build -o bin/${app}.exe $dir/main.go
           done
 
       - name: Archive build output
-        if: success()
         run: |
-          zip -r bin/ltfw-${{ matrix.goos }}-${{ matrix.goarch }}.zip bin/${{ matrix.goos }}
+          zip -r bin/ltfw-windows-amd64.zip bin
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ltfw-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: bin/ltfw-${{ matrix.goos }}-${{ matrix.goarch }}.zip
+          name: ltfw-windows-amd64
+          path: bin/ltfw-windows-amd64.zip
 
   release:
     needs: build
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.PAT }}
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           path: ./bin
 
-      - name: Check Token
-        run: echo "${{ secrets.PAT }}" | cut -c 1-4
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }} # Use PAT instead of GITHUB_TOKEN
         with:
-          tag_name: ${{ github.ref_name }} # Corrected to use just the tag name
-          release_name: Release ${{ github.ref_name }} # Use just the tag name for release name
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
 
-      - name: Upload Release Asset for Linux
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }} # Use PAT instead of GITHUB_TOKEN
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bin/ltfw-linux-amd64/ltfw-linux-amd64.zip
-          asset_name: ltfw-linux-amd64.zip
-          asset_content_type: application/zip
-
       - name: Upload Release Asset for Windows
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }} # Use PAT instead of GITHUB_TOKEN
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bin/ltfw-windows-amd64/ltfw-windows-amd64.zip
+          asset_path: ./bin/ltfw-windows-amd64.zip
           asset_name: ltfw-windows-amd64.zip
           asset_content_type: application/zip
