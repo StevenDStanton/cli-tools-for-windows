@@ -31,7 +31,8 @@ jobs:
 
       - name: Archive build output
         run: |
-          zip -r bin/ltfw-windows-amd64.zip bin
+          cd bin
+          zip -r ltfw-windows-amd64.zip ./*
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
