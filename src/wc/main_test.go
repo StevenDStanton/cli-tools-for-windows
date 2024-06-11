@@ -40,7 +40,7 @@ func TestAllFlagsFalse(t *testing.T) {
 func TestParseFile(t *testing.T) {
 	fileName := "non_existent_file.txt"
 	expected := lineData{0, 0, 0, 0, 0, fileName, "No such file or directory"}
-	result := parseFile(fileName)
+	result := readFile(fileName)
 
 	if result != expected {
 		t.Errorf("Expected %v, got %v", expected, result)

@@ -47,6 +47,10 @@ wc [OPTION]... [FILE]...
 wc [OPTION]... --files0-from=F
 ```
 
+### Compress
+
+Ok so this is not a linux tool, I just wanted to take my hand at building a command line Huffman Encoder/Decoder
+
 ## License
 
 This project is released under the MIT License. For more details, see the [LICENSE](LICENSE) file.

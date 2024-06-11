@@ -2,10 +2,12 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+	"unicode/utf8"
 )
 
 type lineData struct {
@@ -89,7 +91,7 @@ IsAllFalse: %t
 				lines = append(lines, parseUserInput())
 				continue
 			}
-			lines = append(lines, parseFile(filename))
+			lines = append(lines, readFile(filename))
 		}
 	}
 
@@ -136,7 +138,7 @@ func parseArgs() {
 		if strings.HasPrefix(arg, "--") {
 			// Handle long options
 			switch arg {
-			case "--byte":
+			case "--bytes":
 				cmdFlags.printBytes = true
 			case "--chars":
 				cmdFlags.printChars = true
@@ -195,67 +197,87 @@ func parseArgs() {
 
 }
 
-func parseFile(fileName string) lineData {
-	fileData, err := os.ReadFile(fileName)
+func readFile(fileName string) lineData {
+	file, err := os.Open(fileName)
+	fileData := lineData{0, 0, 0, 0, 0, fileName, ""}
 	if err != nil {
-		return lineData{0, 0, 0, 0, 0, fileName, "No such file or directory"}
+		fileData.err = "No Such File or Directory;"
+		return fileData
 	}
 
-	return parseText(fileData, fileName)
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(scanLinesWithNewlines)
+	for scanner.Scan() {
+		line := scanner.Bytes()
+		parseText(&fileData, line)
+	}
+
+	totalBytes += fileData.byteCount
+	totalChars += fileData.charCount
+	totalLines += fileData.lineCount
+	totalWords += fileData.wordCount
+	if fileData.maxLineLen > totalMaxLineLen {
+		totalMaxLineLen = fileData.maxLineLen
+	}
+
+	return fileData
+}
+
+func scanLinesWithNewlines(data []byte, atEOF bool) (advance int, token []byte, err error) {
+	if atEOF && len(data) == 0 {
+		return 0, nil, nil
+	}
+
+	if i := bytes.IndexByte(data, '\n'); i >= 0 {
+		return i + 1, data[:i+1], nil
+	}
+
+	if atEOF {
+		return len(data), data, nil
+	}
+
+	return 0, nil, nil
 }
 
 func parseUserInput() lineData {
 	reader := bufio.NewReader(os.Stdin)
-	userInput, err := reader.ReadBytes('\x00')
-	if err != nil {
-		if err == io.EOF {
-			return parseText(userInput, "-")
+	userData := lineData{0, 0, 0, 0, 0, "-", ""}
+
+	for {
+		userInput, err := reader.ReadBytes('\x00')
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			userData.err = "Error Reading Standard Input"
+			return userData
 		}
-		return lineData{0, 0, 0, 0, 0, "-", "Error Reading Standard Input"}
+		parseText(&userData, userInput)
 	}
-	return parseText(userInput, "-")
+
+	totalBytes += userData.byteCount
+	totalChars += userData.charCount
+	totalLines += userData.lineCount
+	totalWords += userData.wordCount
+	if userData.maxLineLen > totalMaxLineLen {
+		totalMaxLineLen = userData.maxLineLen
+	}
+
+	return userData
 }
 
-func parseText(text []byte, lineName string) lineData {
-	charCount := 0
-	lineCount := 0
-	maxLineLen := 0
-	wordCount := 0
-	byteCount := len(text)
+func parseText(fileData *lineData, line []byte) {
+	//Updated to use built in functions instead of the loop previously used
+	fileData.lineCount++
+	fileData.byteCount += len(line)
+	fileData.wordCount += len(bytes.Fields(line))
+	fileData.charCount += utf8.RuneCount(line)
 
-	stringData := string(text)
-	inWord := false
-	currentLineLen := 0
-	for _, char := range stringData {
-		charCount++
-
-		if char == '\n' {
-			lineCount++
-			if currentLineLen > maxLineLen {
-				maxLineLen = currentLineLen
-			}
-			currentLineLen = 0
-		} else {
-			currentLineLen++
-		}
-
-		if inWord && (char == ' ' || char == '\n' || char == '\r' || char == '\t') {
-			inWord = false
-		}
-
-		if !inWord && (char != ' ' && char != '\n' && char != '\r' && char != '\t') {
-			inWord = true
-			wordCount++
-		}
+	if len(line) > fileData.maxLineLen {
+		fileData.maxLineLen = len(line)
 	}
-
-	totalBytes += byteCount
-	totalChars += charCount
-	totalLines += lineCount
-	totalWords += wordCount
-	totalMaxLineLen += maxLineLen
-
-	return lineData{lineCount, wordCount, charCount, byteCount, maxLineLen, lineName, ""}
 }
 
 func printLinesToConsole(lineData []lineData, lineSize lineSize) {
@@ -290,44 +312,24 @@ func printLinesToConsole(lineData []lineData, lineSize lineSize) {
 }
 
 func getMaxWidths(lines []lineData) lineSize {
-	maxLineCountWidth := 0
-	maxWordCountWidth := 0
-	maxCharCountWidth := 0
-	maxByteCountWidth := 0
-	maxLineLengthWidth := 0
-	maxLineNameWidth := 0
+	var maxWidths lineSize
 
 	for _, line := range lines {
-
-		newLineWidth := len(fmt.Sprintf("%d", line.lineCount))
-		lineWordWidth := len(fmt.Sprintf("%d", line.wordCount))
-		lineCharWidth := len(fmt.Sprintf("%d", line.charCount))
-		lineByteWidth := len(fmt.Sprintf("%d", line.byteCount))
-		lineLenWidth := len(fmt.Sprintf("%d", line.maxLineLen))
-		lineNameWidth := len(line.name)
-
-		if maxLineCountWidth < newLineWidth {
-			maxLineCountWidth = newLineWidth
-		}
-		if maxWordCountWidth < lineWordWidth {
-			maxWordCountWidth = lineWordWidth
-		}
-		if maxCharCountWidth < lineCharWidth {
-			maxCharCountWidth = lineCharWidth
-		}
-		if maxByteCountWidth < lineByteWidth {
-			maxByteCountWidth = lineByteWidth
-		}
-		if maxLineLengthWidth < lineLenWidth {
-			maxLineLengthWidth = lineLenWidth
-		}
-		if maxLineNameWidth < lineNameWidth {
-			maxLineNameWidth = lineNameWidth
-		}
-
+		maxWidths.lineCount = max(maxWidths.lineCount, len(fmt.Sprintf("%d", line.lineCount)))
+		maxWidths.wordCount = max(maxWidths.wordCount, len(fmt.Sprintf("%d", line.wordCount)))
+		maxWidths.charCount = max(maxWidths.charCount, len(fmt.Sprintf("%d", line.charCount)))
+		maxWidths.byteCount = max(maxWidths.byteCount, len(fmt.Sprintf("%d", line.byteCount)))
+		maxWidths.maxLineLen = max(maxWidths.maxLineLen, len(fmt.Sprintf("%d", line.maxLineLen)))
 	}
-	lineSize := lineSize{maxLineCountWidth, maxWordCountWidth, maxCharCountWidth, maxByteCountWidth, maxLineLengthWidth}
-	return lineSize
+
+	return maxWidths
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
 
 func printHelp() {
