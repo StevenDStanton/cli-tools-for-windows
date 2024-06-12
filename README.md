@@ -40,6 +40,8 @@ Coming Soon
 
 ## Software
 
+You can use --help with any of the below packages
+
 ### wc
 
 ```bash
@@ -50,6 +52,8 @@ wc [OPTION]... --files0-from=F
 ### Compress
 
 Ok so this is not a linux tool, I just wanted to take my hand at building a command line Huffman Encoder/Decoder
+
+### tts
 
 ## License
 

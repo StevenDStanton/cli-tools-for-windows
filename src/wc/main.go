@@ -354,7 +354,7 @@ newLine, word, character, byte, maximum line length.
 
 --help                 display this help and exit
 --version              output version information and exit
---about 			  display information about the program and exit`
+--about                display information about the program and exit`
 
 	fmt.Println(help)
 	os.Exit(0)
