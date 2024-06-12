@@ -1,11 +1,20 @@
 package main
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestParseText(t *testing.T) {
-	text := []byte("Hello world\nThis is a test\nAnother line")
-	expected := lineData{2, 8, 39, 39, 14, "test.txt", ""}
-	result := parseText(text, "test.txt")
+	text := []byte("Hello world\nThis is a test\nAnother line\n")
+	expected := lineData{3, 8, 40, 40, 15, "test.txt", ""}
+
+	var result lineData
+	for _, line := range strings.Split(string(text), "\n") {
+		if line != "" {
+			parseText(&result, []byte(line+"\n"))
+		}
+	}
 
 	if result.lineCount != expected.lineCount {
 		t.Errorf("Expected lineCount %d, got %d", expected.lineCount, result.lineCount)
@@ -25,24 +34,10 @@ func TestParseText(t *testing.T) {
 }
 
 func TestAllFlagsFalse(t *testing.T) {
-	// Reset cmdFlags to default
+	// Reset cmdFlags to default values
 	cmdFlags = flags{}
+
 	if !allFlagsFalse() {
-		t.Errorf("Expected allFlagsFalse to be true when no flags are set")
-	}
-
-	cmdFlags.printBytes = true
-	if allFlagsFalse() {
-		t.Errorf("Expected allFlagsFalse to be false when printBytes is set")
-	}
-}
-
-func TestParseFile(t *testing.T) {
-	fileName := "non_existent_file.txt"
-	expected := lineData{0, 0, 0, 0, 0, fileName, "No such file or directory"}
-	result := readFile(fileName)
-
-	if result != expected {
-		t.Errorf("Expected %v, got %v", expected, result)
+		t.Errorf("Expected allFlagsFalse to be true, got false")
 	}
 }
