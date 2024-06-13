@@ -1,6 +1,6 @@
 # Linux Tools for Windows (LTfW)
 
-Bringing beloved Linux utilities to the Windows environment, rewritten from scratch.
+Bringing beloved Linux utilities to the Windows environment, rewritten from scratch, along with some unique applications of my own, such as the Text to Speech program.
 
 ## Introduction
 
@@ -28,15 +28,16 @@ I employed the black-box reverse engineering and clean room design approach in t
 
 The new implementation is crafted to mimic the functionality observed during the analysis phase, yet it is fundamentally built from unique code written by myself. This approach not only adheres to legal standards but also pushes the boundaries of my coding skills, allowing me to explore innovative solutions and optimizations not present in the original software.
 
-## Features
+## Tools Included
 
 - wc: Supports counting bytes, characters, words, lines, and the maximum line length.
-- Cross-Platform: Designed to work seamlessly on all Windows versions.
-- POSIX Compliance: Adheres to the POSIX.1-2017 standard for maximum compatibility and reliability.
+- tts: Converts Markdown files to speech using the OpenAI API.
 
 ## Installation
 
-Coming Soon
+[Download the latest ltfw-windows-amd64.zip](https://github.com/StevenDStanton/ltfw/releases)
+
+Unzip and add the executables to your Windows `PATH`.
 
 ## Software
 
@@ -51,9 +52,15 @@ wc [OPTION]... --files0-from=F
 
 ### Compress
 
-Ok so this is not a linux tool, I just wanted to take my hand at building a command line Huffman Encoder/Decoder
+Note: This is not a traditional Linux tool; it's a command line Huffman Encoder/Decoder I developed for learning purposes.
 
 ### tts
+
+A simple CLI tool for converting text files to speech using the OpenAI API. The tool reads a text file (including Markdown), sends its content to the OpenAI API for text-to-speech conversion, and saves the generated audio file.
+
+```bash
+tts -f filename.md -o filename.mp3
+```
 
 ## License
 
