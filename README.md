@@ -1,4 +1,6 @@
-# Linux Tools for Windows (LTfW)
+# CLI Tools for Windows (LTfW)
+
+I named this repo ltfw because initially I planned to just reverse engineer various linux commands missing on Windows as I learned Go. However, I have found a few other projects and tools I wanted to add, so while the repo name is still ltfw I have renamed it CLI Tools for Windows.
 
 Bringing beloved Linux utilities to the Windows environment, rewritten from scratch, along with some unique applications of my own, such as the Text to Speech program.
 
