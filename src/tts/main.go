@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 type TTSRequest struct {
@@ -88,6 +89,9 @@ func main() {
 func readFileData(inputFile string) string {
 	inputContent, err := os.ReadFile(inputFile)
 	checkFatalErrorExists("Error: reading input file", err)
+	if utf8.RuneCount(inputContent) > 4096 {
+		log.Fatalln("Input cannot exceed 4096 characters")
+	}
 	return string(inputContent)
 }
 
