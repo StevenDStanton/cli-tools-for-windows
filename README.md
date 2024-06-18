@@ -4,6 +4,21 @@ I named this repo ltfw because initially I planned to just reverse engineer vari
 
 Bringing beloved Linux utilities to the Windows environment, rewritten from scratch, along with some unique applications of my own, such as the Text to Speech program.
 
+## Planned Tools
+
+- [x] wc
+- [x] tts
+- [ ] compress
+- [ ] cut
+- [ ] sort
+- [ ] grep
+- [ ] uniq
+- [ ] diff
+- [ ] cat
+- [ ] tail
+- [ ] traceroute
+- [ ] jq
+
 ## Introduction
 
 This project aims to provide Windows users with native versions of popular Linux command-line tools, starting with wc (word count). These tools have been re-engineered based only on their behavior and POSIX standards, without using any original source code.
