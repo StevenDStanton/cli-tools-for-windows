@@ -53,7 +53,7 @@ var (
 
 const (
 	tool    = "wc"
-	version = "1.0.9"
+	version = "1.0.10"
 )
 
 func main() {
@@ -77,6 +77,7 @@ IsAllFalse: %t
 
 	if cmdFlags.versionFlag {
 		common.PrintVersion(tool, version)
+		os.Exit(0)
 	}
 
 	if cmdFlags.helpFlag {

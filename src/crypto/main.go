@@ -25,6 +25,7 @@ func init() {
 		log.Fatalln("Must specify at least one pair such as BTC/USD")
 	}
 	common.PrintVersion(tool, version)
+
 }
 
 func fetchRate(pair string) {

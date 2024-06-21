@@ -33,7 +33,7 @@ const (
 	defaultModel  = "tts-1-hd"
 	defaultFormat = "mp3"
 	defaultSpeed  = "1.0"
-	version       = "v1.1.1"
+	version       = "v1.1.2"
 	tool          = "tts"
 )
 
@@ -64,10 +64,13 @@ func main() {
 	switch {
 	case *helpFlag:
 		printHelp()
+		os.Exit(0)
 	case *configureMode:
 		writeNewConfig()
+		os.Exit(0)
 	case *versionFlag:
 		common.PrintVersion(tool, version)
+		os.Exit(0)
 	default:
 		if *inputFile == "" || *outputFile == "" {
 			fmt.Println("Usage: tts -f filename.md -o filename.mp3")
