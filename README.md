@@ -8,6 +8,7 @@ Bringing beloved Linux utilities to the Windows environment, rewritten from scra
 
 - [x] wc
 - [x] tts
+- [x] crypto
 - [ ] compress
 - [ ] cut
 - [ ] sort
@@ -65,6 +66,15 @@ You can use --help with any of the below packages
 ```bash
 wc [OPTION]... [FILE]...
 wc [OPTION]... --files0-from=F
+```
+
+### crypto
+
+Provide Crypto/Fiat currency abbreviations.
+
+```bash
+crypto BTC/USD
+crypto BTC/USD DOGE/USD SHIB/USD
 ```
 
 ### Compress
