@@ -37,7 +37,10 @@ jobs:
       - name: Print Coverage Directory
         run: ls -la coverage
 
-      - name: Print Coverage Files
+      - name: Print Individual Coverage Files
+        run: cat coverage/*.out
+
+      - name: Print Merged Coverage File
         run: cat coverage/cover.out
 
       - name: Upload Coverage to Coveralls
