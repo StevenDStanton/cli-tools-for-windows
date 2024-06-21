@@ -8,6 +8,8 @@ import (
 	"os"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/StevenDStanton/ltfw/common"
 )
 
 type lineData struct {
@@ -36,7 +38,6 @@ type flags struct {
 	printWords    bool
 	helpFlag      bool
 	versionFlag   bool
-	aboutFlag     bool
 	debug         bool
 }
 
@@ -50,8 +51,13 @@ var (
 	cmdFlags        flags
 )
 
+const (
+	tool    = "wc"
+	version = "1.0.9"
+)
+
 func main() {
-	const version = "1.0.7"
+
 	parseArgs()
 
 	if cmdFlags.debug {
@@ -64,22 +70,17 @@ maxLineLength: %t
 printWords: %t
 helpFlag: %t
 versionFlag: %t
-aboutFlag: %t
 IsAllFalse: %t
 
-`, cmdFlags.printBytes, cmdFlags.printChars, cmdFlags.printLines, cmdFlags.maxLineLength, cmdFlags.printWords, cmdFlags.helpFlag, cmdFlags.versionFlag, cmdFlags.aboutFlag, allFlagsFalse())
+`, cmdFlags.printBytes, cmdFlags.printChars, cmdFlags.printLines, cmdFlags.maxLineLength, cmdFlags.printWords, cmdFlags.helpFlag, cmdFlags.versionFlag, allFlagsFalse())
 	}
 
 	if cmdFlags.versionFlag {
-		printVersion(version)
+		common.PrintVersion(tool, version)
 	}
 
 	if cmdFlags.helpFlag {
 		printHelp()
-	}
-
-	if cmdFlags.aboutFlag {
-		printAbout()
 	}
 
 	lines := []lineData{}
@@ -152,8 +153,6 @@ func parseArgs() {
 				cmdFlags.helpFlag = true
 			case "--version":
 				cmdFlags.versionFlag = true
-			case "--about":
-				cmdFlags.aboutFlag = true
 			default:
 				fmt.Printf("wc: unrecognized option %s\n", arg)
 				fmt.Println("Try 'wc --help' for more information.")
@@ -353,30 +352,8 @@ newLine, word, character, byte, maximum line length.
 --files0-from=F        Has not been included in the Windows version due to issues with null terminators in Windows. 
 
 --help                 display this help and exit
---version              output version information and exit
---about                display information about the program and exit`
+--version              output version information and exit`
 
 	fmt.Println(help)
-	os.Exit(0)
-}
-
-func printVersion(version string) {
-	fmt.Printf("go Version %s\nCopyright 2024 The Simple Dev\nLicense MIT - No Warranty\n\nWritten By Steven Stanton\nReverse Engineered by RTFM", version)
-	os.Exit(0)
-}
-
-func printAbout() {
-	about := `This is a simple implementation of the wc command in Go.
-
-This program has been reversed engineered from the GNU Coreutils wc program using only documentation and observed behavior in a clean room environment.
-
-Author:         Steven Stanton
-License:        MIT - No Warranty
-Author Github:  https//github.com/StevenDStanton
-Project Github: https://github.com/StevemStanton/ltfw
-
-Part of my Linux Tools for Windows (ltfw) project.
-`
-	fmt.Println(about)
 	os.Exit(0)
 }
