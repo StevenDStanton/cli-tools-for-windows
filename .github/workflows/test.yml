@@ -23,8 +23,10 @@ jobs:
           mkdir -p coverage
           cwd=${{ github.workspace }}
           for dir in src/*; do
-            app=$(basename $dir)
-            go test -coverprofile=$cwd/coverage/${app}.out ./$dir/...
+            if [ -f "$dir/go.mod" ] || ls $dir/*_test.go 1> /dev/null 2>&1; then
+              app=$(basename $dir)
+              go test -coverprofile=$cwd/coverage/${app}.out ./$dir/...
+            fi
           done
           # Merge individual coverage files
           echo "mode: set" > coverage/cover.out
