@@ -24,10 +24,12 @@ jobs:
       - name: Build Application
         run: |
           mkdir -p bin
-          cd ${{ github.workspace }}
+          cwd=${{ github.workspace }}
           for dir in src/*; do
+            cd $dir
             app=$(basename $dir)
-            GOOS=windows GOARCH=amd64 go build -o bin/${app}.exe $dir/main.go
+            GOOS=windows GOARCH=amd64 go build -o $cwd/bin/${app}.exe main.go
+            cd $cwd
           done
 
       - name: Archive build output
