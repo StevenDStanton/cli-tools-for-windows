@@ -1,4 +1,4 @@
-name: Test
+name: Test and Coverage
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  test-and-coverage:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,17 +18,7 @@ jobs:
         with:
           go-version: '1.22.4'
 
-      - name: Install dependencies
-        run: |
-          for dir in src/*; do
-            if [ -f "$dir/go.mod" ]; then
-              cd $dir
-              go mod download
-              cd ${{ github.workspace }}
-            fi
-          done
-
-      - name: Run Unit Tests and Generate Coverage Profiles
+      - name: Install dependencies and run tests
         run: |
           mkdir -p coverage
           cwd=${{ github.workspace }}
@@ -36,6 +26,7 @@ jobs:
             if [ -f "$dir/go.mod" ] || ls $dir/*_test.go 1> /dev/null 2>&1; then
               app=$(basename $dir)
               cd $dir
+              go mod download
               go test -covermode=atomic -coverprofile=$cwd/coverage/${app}.out ./...
               cd $cwd
             fi
