@@ -10,28 +10,61 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.22.4
+          go-version: '1.22.4'
+
+      - name: Display Environment Information
+        run: go env
+
+      - name: List Contents for Debugging
+        run: |
+          echo "Root Directory Contents:"
+          ls -la
+          echo "Source Directory Contents:"
+          ls -la src
+
       - name: Install dependencies and run tests
         run: |
           mkdir -p coverage
           cwd=${{ github.workspace }}
+
           for dir in src/*; do
-            if [ -f "$dir/go.mod" ] || ls $dir/*_test.go 1> /dev/null 2>&1; then
+            if [ -d "$dir" ]; then
+              echo "Processing directory: $dir"
               app=$(basename $dir)
               cd $dir
-              go mod download
-              go test -covermode=atomic -coverprofile=$cwd/coverage/${app}.out ./...
+
+              # Init Go Modules if go.mod exists
+              if [ -f "go.mod" ]; then
+                go mod tidy
+                go mod download
+              fi
+
+              # Run tests if *_test.go files exist
+              if ls *_test.go 1> /dev/null 2>&1; then
+                # Print all .go files in the current directory for debugging
+                echo "${app} Go files:"
+                ls -la
+
+                # Run tests
+                go test -v -covermode=atomic -coverprofile=$cwd/coverage/${app}.out ./...
+              else
+                echo "No test files found in $dir"
+              fi
               cd $cwd
             fi
           done
+
           # Merge individual coverage files
           echo "mode: atomic" > coverage/cover.out
           find coverage -name '*.out' | grep -v "cover.out" | xargs grep -h -v "^mode:" >> coverage/cover.out
+
       - name: Install Goveralls
         run: go install github.com/mattn/goveralls@latest
+
       - name: Send Coverage to Coveralls
         env:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
