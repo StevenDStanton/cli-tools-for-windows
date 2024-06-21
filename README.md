@@ -46,6 +46,24 @@ I employed the black-box reverse engineering and clean room design approach in t
 
 The new implementation is crafted to mimic the functionality observed during the analysis phase, yet it is fundamentally built from unique code written by myself. This approach not only adheres to legal standards but also pushes the boundaries of my coding skills, allowing me to explore innovative solutions and optimizations not present in the original software.
 
+## Testing
+
+I have written all tests to use Fuzz. However, this is not set up in the pipeline due to how expensive those tests are to run.
+
+[Fuzz Testing](https://go.dev/doc/security/fuzz/)
+
+### Normal Test Running
+
+```bash
+go test -v
+```
+
+### Fuzz Testing
+
+```bash
+go test --fuzz=Fuzz -fuzztime=1m
+```
+
 ## Tools Included
 
 - wc: Supports counting bytes, characters, words, lines, and the maximum line length.

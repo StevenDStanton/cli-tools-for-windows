@@ -19,7 +19,7 @@ type frequencykv struct {
 
 const (
 	tool    = "compress"
-	version = "v0.0.5"
+	version = "v0.0.6"
 )
 
 var (
@@ -40,13 +40,18 @@ func init() {
 }
 
 func main() {
+	menu()
 
+}
+
+func menu() {
 	if *helpFlag {
 		printHelp()
 		os.Exit(0)
 	}
 	if *versionFlag {
-		common.PrintVersion(tool, version)
+		versionInformation := common.PrintVersion(tool, version)
+		fmt.Println(versionInformation)
 		os.Exit(0)
 	}
 	if !*developerFlag {

@@ -1,0 +1,39 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22.3
+
+      - name: Run Tests
+        run: |
+          mkdir -p coverage
+          cwd=${{ github.workspace }}
+          for dir in src/*; do
+            cd $dir
+            app=$(basename $dir)
+            go test -coverprofile=$cwd/coverage/${app}.out ./...
+            cd $cwd
+          done
+          # Merge individual coverage files
+          echo "mode: set" > coverage/cover.out
+          grep -h -v "^mode:" coverage/*.out >> coverage/cover.out
+
+      - name: Upload Coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          path-to-lcov: coverage/cover.out

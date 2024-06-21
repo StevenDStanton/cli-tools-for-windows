@@ -16,7 +16,7 @@ var (
 
 const (
 	tool    = "Crypto"
-	version = "v1.0.6"
+	version = "v1.0.7"
 )
 
 func init() {
@@ -24,7 +24,8 @@ func init() {
 	if len(args) < 1 {
 		log.Fatalln("Must specify at least one pair such as BTC/USD")
 	}
-	common.PrintVersion(tool, version)
+	versionInformation := common.PrintVersion(tool, version)
+	fmt.Println(versionInformation)
 
 }
 

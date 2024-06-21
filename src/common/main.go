@@ -6,8 +6,8 @@ import (
 
 const Version = "v0.1.0"
 
-func PrintVersion(tool string, version string) {
-	fmt.Printf(`%s: Version %s
+func PrintVersion(tool string, version string) string {
+	return fmt.Sprintf(`%s: Version %s
 
 Copyright 2024 The Simple Dev
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -15,12 +16,13 @@ var (
 
 const (
 	tool    = "cut"
-	version = "v0.0.1"
+	version = "v0.0.2"
 )
 
 func main() {
 
-	common.PrintVersion(tool, version)
+	versionInformation := common.PrintVersion(tool, version)
+	fmt.Println(versionInformation)
 	if !*developerFlag {
 		log.Fatalln("This program is in development and not ready for usage")
 	}
