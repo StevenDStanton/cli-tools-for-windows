@@ -34,6 +34,9 @@ jobs:
           echo "mode: set" > coverage/cover.out
           find coverage -name '*.out' | grep -v "cover.out" | xargs grep -h -v "^mode:" >> coverage/cover.out
 
+      - name: Print Coverage Files
+        run: cat coverage/cover.out
+
       - name: Upload Coverage to Coveralls
         uses: coverallsapp/github-action@v2
         with:
