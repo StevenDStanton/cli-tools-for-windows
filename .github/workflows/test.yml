@@ -16,9 +16,6 @@ jobs:
         with:
           go-version: '1.22.4'
 
-      - name: Install gocovmerge
-        run: go install github.com/wadey/gocovmerge@latest
-
       - name: Display Environment Information
         run: go env
 
@@ -56,7 +53,8 @@ jobs:
 
       - name: Merge coverage files
         run: |
-          gocovmerge coverage/*.out > coverage/cover.out
+          echo "mode: set" > coverage/cover.out
+          find coverage -name '*.out' | grep -v "cover.out" | xargs grep -h -v "^mode:" >> coverage/cover.out
 
       - name: Adjust coverage paths
         run: |
@@ -65,19 +63,21 @@ jobs:
           echo "mode: set" > $TEMP_COVER_OUT
 
           # Adjust paths to be relative in the coverage file 
-          sed 's#/home/runner/work/cli-tools-for-windows/cli-tools-for-windows/##g' coverage/cover.out | grep -v "^mode:" >> $TEMP_COVER_OUT
+          sed 's#$(pwd)/##g' coverage/cover.out | grep -v "^mode:" >> $TEMP_COVER_OUT
 
           mv $TEMP_COVER_OUT coverage/cover.out
 
-      - name: Show Merged Coverage File
-        run: |
-          echo "Merged coverage file content:"
-          cat coverage/cover.out
+      - name: Print Coverage Directory
+        run: ls -la coverage
 
-      - name: Install Coveralls
-        run: go install github.com/mattn/goveralls@latest
+      - name: Print Individual Coverage Files
+        run: cat coverage/*.out
+
+      - name: Print Merged Coverage File
+        run: cat coverage/cover.out
 
       - name: Upload Coverage to Coveralls
-        env:
-          COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: goveralls -coverprofile=coverage/cover.out -service=github
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          path-to-lcov: coverage/cover.out
