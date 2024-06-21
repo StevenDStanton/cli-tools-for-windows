@@ -48,6 +48,8 @@ The new implementation is crafted to mimic the functionality observed during the
 
 ## Testing
 
+[![Coverage Status](https://coveralls.io/repos/github/StevenDStanton/cli-tools-for-windows/badge.svg)](https://coveralls.io/github/StevenDStanton/cli-tools-for-windows)
+
 I have written all tests to use Fuzz. However, this is not set up in the pipeline due to how expensive those tests are to run.
 
 [Fuzz Testing](https://go.dev/doc/security/fuzz/)
