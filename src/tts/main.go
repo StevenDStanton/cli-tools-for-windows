@@ -14,6 +14,8 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+
+	"github.com/StevenDStanton/ltfw/common"
 )
 
 type TTSRequest struct {
@@ -31,12 +33,13 @@ const (
 	defaultModel  = "tts-1-hd"
 	defaultFormat = "mp3"
 	defaultSpeed  = "1.0"
+	version       = "v1.1.1"
+	tool          = "tts"
 )
 
 var (
 	configFilePath string
 	OPENAI_API_KEY string
-	version        string
 )
 
 var (
@@ -52,7 +55,6 @@ var (
 )
 
 func init() {
-	version = "1.1.0"
 	configure()
 	flag.Parse()
 }
@@ -65,7 +67,7 @@ func main() {
 	case *configureMode:
 		writeNewConfig()
 	case *versionFlag:
-		printVersion()
+		common.PrintVersion(tool, version)
 	default:
 		if *inputFile == "" || *outputFile == "" {
 			fmt.Println("Usage: tts -f filename.md -o filename.mp3")
@@ -166,11 +168,6 @@ func printHelp() {
 		Speed options 0.25 to 4.0
 	`
 	fmt.Println(help)
-}
-
-func printVersion() {
-	fmt.Printf("go Version %s\nCopyright 2024 The Simple Dev\nLicense MIT - No Warranty\n\nWritten By Steven Stanton", version)
-	os.Exit(0)
 }
 
 //This can be improved in the future to have a single config setup

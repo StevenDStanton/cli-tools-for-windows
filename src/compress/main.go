@@ -8,6 +8,8 @@ import (
 	"log"
 	"os"
 	"sort"
+
+	"github.com/StevenDStanton/ltfw/common"
 )
 
 type frequencykv struct {
@@ -16,7 +18,8 @@ type frequencykv struct {
 }
 
 const (
-	VERSION = "v0.0.3"
+	tool    = "compress"
+	version = "v0.0.4"
 )
 
 var (
@@ -43,8 +46,7 @@ func main() {
 		os.Exit(0)
 	}
 	if *versionFlag {
-		printVersion()
-		os.Exit(0)
+		common.PrintVersion(tool, version)
 	}
 	if !*developerFlag {
 		log.Fatalln("This program is in development and not ready for usage")
@@ -140,9 +142,4 @@ func printHelp() {
  `
 
 	fmt.Println(help)
-}
-
-func printVersion() {
-	fmt.Printf("go Version %s\nCopyright 2024 The Simple Dev\nLicense MIT - No Warranty\n\nWritten By Steven Stanton", VERSION)
-	os.Exit(0)
 }

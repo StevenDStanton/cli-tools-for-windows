@@ -1,5 +1,7 @@
 module tts-tool
 
-go 1.22.2
+go 1.22.4
 
-require github.com/joho/godotenv v1.5.1 // indirect
+require github.com/StevenDStanton/ltfw/common v0.1.0
+
+replace github.com/StevenDStanton/ltfw/common => ../common

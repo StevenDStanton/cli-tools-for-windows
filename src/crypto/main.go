@@ -6,6 +6,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/StevenDStanton/ltfw/common"
 	"github.com/StevenDStanton/ltfw/crypto/api"
 )
 
@@ -23,6 +24,7 @@ func init() {
 	if len(args) < 1 {
 		log.Fatalln("Must specify at least one pair such as BTC/USD")
 	}
+	common.PrintVersion(tool, version)
 }
 
 func fetchRate(pair string) {

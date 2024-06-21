@@ -5,6 +5,8 @@ import (
 	"os"
 )
 
+const Version = "v0.1.0"
+
 func PrintVersion(tool string, version string) {
 	fmt.Printf(`%sVersion %s
 
