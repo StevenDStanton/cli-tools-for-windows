@@ -45,14 +45,9 @@ jobs:
 
               # Run tests if *_test.go files exist
               if ls *_test.go 1> /dev/null 2>&1; then
-                # Print all .go files in the current directory for debugging
                 echo "${app} Go files:"
                 ls -la
-
-                # Go list to confirm package path
                 go list
-
-                # Run tests
                 go test -v -covermode=atomic -coverprofile=$cwd/coverage/${app}.out ./...
               else
                 echo "No test files found in $dir"
@@ -61,9 +56,16 @@ jobs:
             fi
           done
 
-          # Merge individual coverage files
+          # Merge individual coverage files safely using a temporary file
           echo "mode: set" > coverage/cover.out
-          grep -h -v "^mode:" coverage/*.out >> coverage/cover.out
+          TMP_FILE=$(mktemp)
+          grep -h -v "^mode:" coverage/*.out > $TMP_FILE
+          cat $TMP_FILE >> coverage/cover.out
+
+      - name: Show Merged Coverage File
+        run: |
+          echo "Merged coverage file content:"
+          cat coverage/cover.out
 
       - name: Install Goveralls
         run: go install github.com/mattn/goveralls@latest
