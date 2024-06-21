@@ -1,23 +1,19 @@
 name: Test and Coverage
-
 on:
   push:
     branches:
       - master
   pull_request:
-
 jobs:
   test-and-coverage:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v3
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
-          go-version: '1.22.4'
-
+          go-version: 1.22.4
       - name: Install dependencies and run tests
         run: |
           mkdir -p coverage
@@ -32,12 +28,10 @@ jobs:
             fi
           done
           # Merge individual coverage files
-          echo "mode: set" > coverage/cover.out
+          echo "mode: atomic" > coverage/cover.out
           find coverage -name '*.out' | grep -v "cover.out" | xargs grep -h -v "^mode:" >> coverage/cover.out
-
       - name: Install Goveralls
         run: go install github.com/mattn/goveralls@latest
-
       - name: Send Coverage to Coveralls
         env:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

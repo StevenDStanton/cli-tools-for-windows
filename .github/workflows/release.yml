@@ -67,6 +67,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bin/cli-tools-for-windows-amd64/cli-tools-for-windows-amd64.zip
+          asset_path: ./bin/cli-tools-for-windows-amd64.zip
           asset_name: cli-tools-for-windows-amd64.zip
           asset_content_type: application/zip
