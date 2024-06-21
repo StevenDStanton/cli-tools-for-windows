@@ -19,7 +19,7 @@ type frequencykv struct {
 
 const (
 	tool    = "compress"
-	version = "v0.0.6"
+	version = "v0.1.0"
 )
 
 var (
@@ -30,21 +30,11 @@ var (
 	decodeFlag    = flag.Bool("decode", false, "Decode file")
 	inputFile     = flag.String("i", "", "Input file name")
 	outputFile    = flag.String("o", "", "Output file name")
-
-	frequencyMap = make(map[rune]int)
 )
 
 func init() {
 	flag.Parse()
 
-}
-
-func main() {
-	menu()
-
-}
-
-func menu() {
 	if *helpFlag {
 		printHelp()
 		os.Exit(0)
@@ -58,24 +48,30 @@ func menu() {
 		log.Fatalln("This program is in development and not ready for usage")
 	}
 
+}
+
+func main() {
+	menu()
+
+}
+
+func menu() {
 	if *inputFile == "" || *outputFile == "" {
 		log.Fatalln("Must have an input and output file name")
 	}
 
-	if *encodeFlag {
+	switch {
+	case *encodeFlag:
 		encodeFile()
-		os.Exit(0)
-	}
-
-	if *decodeFlag {
+	case *decodeFlag:
 		decodeFile()
-		os.Exit(0)
+	default:
+		log.Fatal("No option selected")
 	}
-
-	log.Fatal("No option selected")
 }
 
 func encodeFile() {
+	frequencyMap := make(map[rune]int)
 	file, err := os.Open(*inputFile)
 	if err != nil {
 		log.Fatalf("Unable to read file, %v", err)
@@ -86,7 +82,7 @@ func encodeFile() {
 	scanner.Split(scanLinesWithNewlines)
 	for scanner.Scan() {
 		chunk := scanner.Text()
-		buildFrequencyMap(chunk)
+		buildFrequencyMap(frequencyMap, chunk)
 	}
 
 	sortedFrequencyMap := make([]frequencykv, 0, len(frequencyMap))
@@ -106,7 +102,7 @@ func decodeFile() {
 
 }
 
-func buildFrequencyMap(chunk string) {
+func buildFrequencyMap(frequencyMap map[rune]int, chunk string) {
 	for _, char := range chunk {
 		frequencyMap[char]++
 	}
