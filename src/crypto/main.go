@@ -6,8 +6,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/StevenDStanton/ltfw/common"
-	"github.com/StevenDStanton/ltfw/crypto/api"
+	"github.com/StevenDStanton/cli-tools-for-windows/common"
+	"github.com/StevenDStanton/cli-tools-for-windows/crypto/api"
 )
 
 var (

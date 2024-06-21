@@ -1,6 +1,6 @@
-# CLI Tools for Windows (LTfW)
+# CLI Tools for Windows
 
-I named this repo ltfw because initially I planned to just reverse engineer various linux commands missing on Windows as I learned Go. However, I have found a few other projects and tools I wanted to add, so while the repo name is still ltfw I have renamed it CLI Tools for Windows.
+I named this repo Linux Tools for Windows because initially I planned to just reverse engineer various linux commands missing on Windows as I learned Go. However, I have found a few other projects and tools I wanted to add and have renamed it CLI Tools for Windows.
 
 Bringing beloved Linux utilities to the Windows environment, rewritten from scratch, along with some unique applications of my own, such as the Text to Speech program.
 
@@ -71,7 +71,7 @@ go test --fuzz=Fuzz -fuzztime=1m
 
 ## Installation
 
-[Download the latest ltfw-windows-amd64.zip](https://github.com/StevenDStanton/ltfw/releases)
+[Download the latest cli-tools-for-windows-windows-amd64.zip](https://github.com/StevenDStanton/cli-tools-for-windows/releases)
 
 Unzip and add the executables to your Windows `PATH`.
 

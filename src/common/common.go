@@ -14,7 +14,7 @@ Copyright 2024 The Simple Dev
 Author:         Steven Stanton
 License:        MIT - No Warranty
 Author Github:  https//github.com/StevenDStanton
-Project Github: https://github.com/StevemStanton/ltfw
+Project Github: https://github.com/StevemStanton/cli-tools-for-windows
 
 Part of my CLI Tools for Windows project.`, tool, version)
 }

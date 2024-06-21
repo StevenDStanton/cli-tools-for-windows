@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/StevenDStanton/ltfw/crypto/dataTypes"
+	"github.com/StevenDStanton/cli-tools-for-windows/crypto/dataTypes"
 )
 
 const apiURL = "https://cex.io/api/ticker/%s"

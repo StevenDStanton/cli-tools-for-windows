@@ -15,7 +15,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/StevenDStanton/ltfw/common"
+	"github.com/StevenDStanton/cli-tools-for-windows/common"
 )
 
 type TTSRequest struct {
@@ -28,7 +28,7 @@ type TTSRequest struct {
 
 const (
 	CONFIG_FILE   = "tts.config"
-	CONFIG_DIR    = ".ltfw"
+	CONFIG_DIR    = ".cli-tools-for-windows"
 	defaultVoice  = "nova"
 	defaultModel  = "tts-1-hd"
 	defaultFormat = "mp3"
@@ -175,7 +175,7 @@ func printHelp() {
 }
 
 //This can be improved in the future to have a single config setup
-//for all ltfw. However, to avoid over engineering the solution for
+//for all cli-tools-for-windows. However, to avoid over engineering the solution for
 //now this single setup works. I will reveiew and refactor if it becomes an issue.
 //For now each file gets a config for its usage
 

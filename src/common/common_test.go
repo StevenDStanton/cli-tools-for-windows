@@ -31,7 +31,7 @@ func FuzzPrintVersion(f *testing.F) {
 			t.Errorf("Output does not contain expected license line. Got: %s, Expected: %s", output, expectedLicense)
 		}
 
-		expectedGithub := "Project Github: https://github.com/StevemStanton/ltfw"
+		expectedGithub := "Project Github: https://github.com/StevemStanton/cli-tools-for-windows"
 		if !strings.Contains(output, expectedGithub) {
 			t.Errorf("Output does not contain expected GitHub URL. Got: %s, Expected: %s", output, expectedGithub)
 		}
