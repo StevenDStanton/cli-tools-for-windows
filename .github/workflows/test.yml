@@ -1,11 +1,9 @@
 name: Test
-
 on:
   push:
     branches:
       - master
   pull_request:
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -16,35 +14,70 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.22.4
+          go-version: '1.22.4'
 
-      - name: Run Tests
+      - name: Install gocovmerge
+        run: go install github.com/wadey/gocovmerge@latest
+
+      - name: Display Environment Information
+        run: go env
+
+      - name: List Contents for Debugging
+        run: |
+          echo "Root Directory Contents:"
+          ls -la
+          echo "Source Directory Contents:"
+          ls -la src
+
+      - name: Install dependencies and run tests
         run: |
           mkdir -p coverage
           cwd=${{ github.workspace }}
+
           for dir in src/*; do
-            if [ -f "$dir/go.mod" ] || ls $dir/*_test.go 1> /dev/null 2>&1; then
-              app=$(basename $dir)
+            if [ -d "$dir" ]; then
+              echo "Processing directory: $dir"
               cd $dir
-              go test -coverprofile=$cwd/coverage/${app}.out ./...
+
+              if [ -f "go.mod" ]; then
+                go mod tidy
+                go mod download
+              fi
+
+              if ls *_test.go 1> /dev/null 2>&1; then
+                go test -v -covermode=atomic -coverprofile=$cwd/coverage/$(basename $dir).out ./...
+              else
+                echo "No test files found in $dir"
+              fi
+
               cd $cwd
             fi
           done
-          # Merge individual coverage files
-          echo "mode: set" > coverage/cover.out
-          find coverage -name '*.out' | grep -v "cover.out" | xargs grep -h -v "^mode:" >> coverage/cover.out
 
-      - name: Print Coverage Directory
-        run: ls -la coverage
+      - name: Merge coverage files
+        run: |
+          gocovmerge coverage/*.out > coverage/cover.out
 
-      - name: Print Individual Coverage Files
-        run: cat coverage/*.out
+      - name: Adjust coverage paths
+        run: |
+          # Create a temp file for adjusted output
+          TEMP_COVER_OUT=$(mktemp)
+          echo "mode: set" > $TEMP_COVER_OUT
 
-      - name: Print Merged Coverage File
-        run: cat coverage/cover.out
+          # Adjust paths to be relative in the coverage file 
+          sed 's#/home/runner/work/cli-tools-for-windows/cli-tools-for-windows/##g' coverage/cover.out | grep -v "^mode:" >> $TEMP_COVER_OUT
+
+          mv $TEMP_COVER_OUT coverage/cover.out
+
+      - name: Show Merged Coverage File
+        run: |
+          echo "Merged coverage file content:"
+          cat coverage/cover.out
+
+      - name: Install Coveralls
+        run: go install github.com/mattn/goveralls@latest
 
       - name: Upload Coverage to Coveralls
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          path-to-lcov: coverage/cover.out
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: goveralls -coverprofile=coverage/cover.out -service=github
