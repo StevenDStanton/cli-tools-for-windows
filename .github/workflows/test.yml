@@ -11,14 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v2
         with:
-          go-version: 1.22.4
+          go-version: '1.22.4'
 
-      - name: Run Tests
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Run Unit Tests and Generate Coverage Profiles
         run: |
           mkdir -p coverage
           cwd=${{ github.workspace }}
@@ -26,7 +29,7 @@ jobs:
             if [ -f "$dir/go.mod" ] || ls $dir/*_test.go 1> /dev/null 2>&1; then
               app=$(basename $dir)
               cd $dir
-              go test -coverprofile=$cwd/coverage/${app}.out ./...
+              go test -covermode=atomic -coverprofile=$cwd/coverage/${app}.out ./...
               cd $cwd
             fi
           done
@@ -34,17 +37,10 @@ jobs:
           echo "mode: set" > coverage/cover.out
           find coverage -name '*.out' | grep -v "cover.out" | xargs grep -h -v "^mode:" >> coverage/cover.out
 
-      - name: Print Coverage Directory
-        run: ls -la coverage
+      - name: Install Goveralls
+        run: go install github.com/mattn/goveralls@latest
 
-      - name: Print Individual Coverage Files
-        run: cat coverage/*.out
-
-      - name: Print Merged Coverage File
-        run: cat coverage/cover.out
-
-      - name: Upload Coverage to Coveralls
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          path-to-lcov: coverage/cover.out
+      - name: Send Coverage to Coveralls
+        env:
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: goveralls -coverprofile=coverage/cover.out -service=github
