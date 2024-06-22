@@ -1,5 +1,19 @@
 # CLI Tools for Windows
 
+## Archival
+
+While I really love rebuilding these linux tools, this project is being archived.
+
+The reason is simple. With the fiasco of Recall for windows and the improved support of gaming on Linux I am moving away from Windows on my main PC. I will keep a dedicated Gaming PC with windows on it certain games such as Fortnite and Cyberpunk which either require a better video card or have anti-cheat that is not compatible with windows.
+
+However, on my daily driver laptop I normally play simple games such as Valhiem, Stardew Valley, and Core Keeper.
+
+I will be moving some of the projects I still will need and use such as my tts over to a new repo eventually.
+
+For those curious I have made the move to Pop!_OS on my Dell XPS15 and it is working great. However, I am considering a System 76 laptop when I upgrade again in a few years.
+
+## Updates
+
 I named this repo Linux Tools for Windows because initially I planned to just reverse engineer various linux commands missing on Windows as I learned Go. However, I have found a few other projects and tools I wanted to add and have renamed it CLI Tools for Windows.
 
 Bringing beloved Linux utilities to the Windows environment, rewritten from scratch, along with some unique applications of my own, such as the Text to Speech program.
